@@ -1,6 +1,8 @@
 package com.example.pokedetails.ui
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.example.pokedetails.navigation.routes.PokemonDetailScreenRoute
@@ -13,6 +15,7 @@ import com.example.pokedetails.ui.pokemon_list.PokemonListScreen
 fun MainScreen() {
     val navController = rememberNavController()
     NavHost(
+        modifier = Modifier.fillMaxSize(),
         navController = navController,
         startDestination = PokemonListScreenRoute.route
     ) {

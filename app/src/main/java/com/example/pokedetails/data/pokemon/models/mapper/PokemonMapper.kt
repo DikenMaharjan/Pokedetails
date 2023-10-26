@@ -5,4 +5,5 @@ import com.example.pokedetails.data.pokemon.models.domain.PokemonShortDetail
 
 fun Result.toPokemonModel() = PokemonShortDetail(
     pokemonName = this.name,
+    detailUrl = this.url
 )

@@ -5,15 +5,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.example.pokedetails.ui.theme.spacing
 
 fun LazyListScope.defaultLoadingIndicator(
     modifier: Modifier = Modifier
 ) {
     item {
-        DefaultLoadingIndicator(modifier = modifier)
+        DefaultLoadingIndicator(modifier = modifier.fillParentMaxWidth())
     }
 }
 
@@ -22,9 +24,11 @@ fun LazyListScope.defaultLoadingIndicator(
 fun DefaultLoadingIndicator(
     modifier: Modifier = Modifier
 ) {
-    Box(modifier = modifier.fillMaxWidth()) {
+    Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         CircularProgressIndicator(
-            modifier = Modifier.padding(top = 32.dp)
+            modifier = Modifier.padding(
+                top = MaterialTheme.spacing.dimen32
+            )
         )
     }
 }

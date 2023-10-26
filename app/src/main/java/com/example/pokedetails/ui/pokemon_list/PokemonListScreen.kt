@@ -1,6 +1,6 @@
 package com.example.pokedetails.ui.pokemon_list
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,38 +19,46 @@ import com.example.pokedetails.utils.loadingdata.LoadingData
 fun PokemonListScreen(
     modifier: Modifier = Modifier,
     viewModel: PokemonListScreenViewModel = hiltViewModel(),
-    navigateToPokemonDetail: (id: String) -> Unit
+    navigateToPokemonDetail: (url: String) -> Unit
 ) {
-    Box(modifier = modifier) {
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            when (val pokemons = viewModel.pokemons) {
-                is LoadingData.Error -> defaultError(
-                    errorMsg = pokemons.errorMsg
-                )
+    LazyColumn(
+        modifier = modifier
+            .fillMaxSize()
+    ) {
+        when (val pokemons = viewModel.pokemons) {
+            is LoadingData.Error -> defaultError(
+                errorMsg = pokemons.errorMsg
+            )
 
-                is LoadingData.LoadedData -> pokemons(pokemons = pokemons.data)
-                LoadingData.Loading -> defaultLoadingIndicator()
-            }
+            is LoadingData.LoadedData -> pokemons(
+                pokemons = pokemons.data,
+                onPokemonClick = navigateToPokemonDetail
+            )
+
+            LoadingData.Loading -> defaultLoadingIndicator()
         }
     }
-
 }
 
 fun LazyListScope.pokemons(
-    pokemons: List<PokemonShortDetail>
+    pokemons: List<PokemonShortDetail>,
+    onPokemonClick: (url: String) -> Unit
 ) {
     items(pokemons) { pokemon ->
-        PokemonItem(pokemon = pokemon)
+        PokemonItem(pokemon = pokemon, onClick = onPokemonClick)
     }
 }
 
 @Composable
 fun PokemonItem(
     modifier: Modifier = Modifier,
-    pokemon: PokemonShortDetail
+    pokemon: PokemonShortDetail,
+    onClick: (url: String) -> Unit
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.clickable {
+            onClick(pokemon.detailUrl)
+        },
     ) {
         Text(text = pokemon.pokemonName)
     }

@@ -3,6 +3,7 @@ package com.example.pokedetails.network.utils
 import com.example.pokedetails.utils.dispatchers.AppDispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.cancellation.CancellationException
@@ -23,6 +24,8 @@ class SafeApiCall @Inject constructor(
                 }
             } catch (e: CancellationException) {
                 throw e
+            } catch (e: IOException) {
+                Result.failure(Exception("Could not connect to server."))
             } catch (e: Exception) {
                 Result.failure(e)
             }
