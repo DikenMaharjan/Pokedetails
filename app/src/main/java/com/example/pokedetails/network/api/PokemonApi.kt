@@ -1,4 +1,4 @@
-package com.example.pokedetails.network
+package com.example.pokedetails.network.api
 
 import com.example.pokedetails.data.pagination.models.paginatedresponse.PaginatedResponse
 import retrofit2.Response

@@ -1,7 +1,7 @@
 package com.example.pokedetails.di
 
-import com.example.pokedetails.network.API_END_POINT
-import com.example.pokedetails.network.PokemonApi
+import com.example.pokedetails.network.utils.API_END_POINT
+import com.example.pokedetails.network.api.PokemonApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

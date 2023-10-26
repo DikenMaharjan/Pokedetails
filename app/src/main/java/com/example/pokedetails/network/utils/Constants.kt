@@ -1,4 +1,4 @@
-package com.example.pokedetails.network
+package com.example.pokedetails.network.utils
 
 
 private const val BASE_URL = "https://pokeapi.co/"
