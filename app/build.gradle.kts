@@ -66,6 +66,8 @@ dependencies {
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
 
+    implementation(libs.retrofit)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
