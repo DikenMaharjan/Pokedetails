@@ -9,6 +9,8 @@ lifecycle-runtime-ktx = "2.6.2"
 activity-compose = "1.8.0"
 compose-bom = "2023.03.00"
 hiltVersion = "2.44"
+hiltComposeNavigationVersion = "1.0.0"
+navigationCompose = "2.7.4"
 retrofitVersion = "2.9.0"
 httpLoggingInterceptorVersion = "4.11.0"
 
@@ -31,6 +33,10 @@ material3 = { group = "androidx.compose.material3", name = "material3" }
 
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hiltVersion" }
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hiltVersion" }
+hilt-navigation = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltComposeNavigationVersion" }
+
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+
 
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofitVersion" }
 gson-converter-factory = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofitVersion" }
