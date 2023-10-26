@@ -67,6 +67,9 @@ dependencies {
     kapt(libs.hilt.compiler)
 
     implementation(libs.retrofit)
+    implementation(libs.gson.converter.factory)
+
+    implementation(libs.http.logging.interceptor)
 
 
     testImplementation(libs.junit)
