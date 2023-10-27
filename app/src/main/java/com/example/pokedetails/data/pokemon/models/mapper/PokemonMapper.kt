@@ -26,6 +26,6 @@ fun PokemonDetailDto.toPokemon() = Pokemon(
     ),
     pokemonType = this.types.sortedBy { it.slot }.map { it.type.name.capitalizeFirst() },
     weightInGrams = this.weight * 100,
-    heightInMetre = this.height * 10,
+    heightInMetre = this.height / 10f,
     moves = this.moves.map { it.move.name.capitalizeFirst() }
 )

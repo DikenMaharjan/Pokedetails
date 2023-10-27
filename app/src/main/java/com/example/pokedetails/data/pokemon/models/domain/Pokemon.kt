@@ -5,7 +5,7 @@ data class Pokemon(
     val image: PokemonImage,
     val pokemonType: List<String>,
     val weightInGrams: Int,
-    val heightInMetre: Int,
+    val heightInMetre: Float,
     val moves: List<String>
 )
 
