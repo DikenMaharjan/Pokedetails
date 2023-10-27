@@ -19,9 +19,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.pokedetails.R
 import com.example.pokedetails.data.pokemon.models.domain.Pokemon
+import com.example.pokedetails.utils.painter.rememberSizeRetainingPainter
 import kotlinx.coroutines.launch
 
 @Composable
@@ -67,7 +70,13 @@ fun Images(
                 contentDescription = "Pokemon Image",
                 modifier = Modifier
                     .fillMaxWidth(),
-                contentScale = ContentScale.FillHeight
+                contentScale = ContentScale.FillHeight,
+                placeholder = rememberSizeRetainingPainter(
+                    delegatePainter = painterResource(id = R.drawable.ic_loading)
+                ),
+                error = rememberSizeRetainingPainter(
+                    delegatePainter = painterResource(id = R.drawable.baseline_error_outline_24)
+                )
             )
         }
         if (pagerState.canScrollBackward) {
