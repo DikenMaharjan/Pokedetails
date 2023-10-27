@@ -40,7 +40,7 @@ fun PokemonInfo(
     Column(
         modifier = modifier
             .padding(MaterialTheme.spacing.dimen8)
-            .fillMaxWidth()
+            .fillMaxSize()
             .clip(MaterialTheme.shapes.medium)
             .background(
                 MaterialTheme.colorScheme.background,
@@ -123,7 +123,10 @@ fun PokemonMoves(
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold
         )
-        FlowRow(horizontalArrangement = Arrangement.SpaceEvenly) {
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
             pokemon.moves.forEach { move ->
                 Text(
                     text = move,

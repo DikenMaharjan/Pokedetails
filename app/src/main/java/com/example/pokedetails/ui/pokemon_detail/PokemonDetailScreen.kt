@@ -3,6 +3,7 @@ package com.example.pokedetails.ui.pokemon_detail
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
@@ -24,6 +25,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.pokedetails.data.pokemon.models.domain.Pokemon
@@ -68,7 +71,6 @@ fun PokemonDetailScreen(
             modifier = modifier
                 .weight(1f)
                 .pullRefresh(state)
-                .verticalScroll(rememberScrollState())
         ) {
             when (val pokemon = viewModel.pokemon) {
                 is LoadingData.Error -> DefaultError(errorMsg = pokemon.errorMsg)
@@ -123,13 +125,63 @@ private fun TopBar(
 fun PokemonDetail(
     modifier: Modifier = Modifier, pokemon: Pokemon
 ) {
-    Column(
+    ScrollableSplitLayout(
         modifier = modifier
-            .fillMaxSize()
-    ) {
-        PokemonImage(pokemon = pokemon)
-        PokemonInfo(
-            pokemon = pokemon
-        )
+            .fillMaxSize(),
+        header = {
+            PokemonImage(pokemon = pokemon)
+        },
+        footer = {
+            PokemonInfo(
+                modifier = Modifier.fillMaxSize(),
+                pokemon = pokemon
+            )
+        }
+    )
+}
+
+
+// This layout will fill take max height and max width imposed by parent.
+// This layout will be scrollable
+// If the (sum of height of header and footer) < (max_height), footer will take the remaining area.
+@Composable
+fun ScrollableSplitLayout(
+    modifier: Modifier = Modifier,
+    header: @Composable BoxScope.() -> Unit,
+    footer: @Composable BoxScope.() -> Unit
+) {
+    SubcomposeLayout(modifier = modifier) { initialConstraints ->
+        val actualPlaceable = subcompose(1) {
+            Layout(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                content = {
+                    Box(content = header)
+                    Box(
+                        content = footer,
+                        propagateMinConstraints = true
+                    )
+                }
+            ) { measureables, constraints ->
+                val looseConstraints = constraints.copy(
+                    minHeight = 0
+                )
+                val headerPlaceable = measureables[0].measure(looseConstraints)
+                val footerPlaceable = measureables[1].measure(
+                    looseConstraints.copy(
+                        minHeight = initialConstraints.maxHeight - headerPlaceable.height
+                    )
+                )
+                val totalHeight = headerPlaceable.height + footerPlaceable.height
+                layout(constraints.maxWidth, totalHeight) {
+                    headerPlaceable.place(0, 0)
+                    footerPlaceable.place(0, headerPlaceable.height)
+                }
+            }
+        }[0].measure(initialConstraints)
+        layout(actualPlaceable.width, actualPlaceable.height) {
+            actualPlaceable.place(0, 0)
+        }
     }
 }
