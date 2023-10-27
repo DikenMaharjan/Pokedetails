@@ -1,8 +1,12 @@
 package com.example.pokedetails.ui.pokemon_detail.composables
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -11,8 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,7 +37,7 @@ fun PokemonInfo(
     modifier: Modifier = Modifier,
     pokemon: Pokemon,
 ) {
-    Row(
+    Column(
         modifier = modifier
             .padding(MaterialTheme.spacing.dimen8)
             .fillMaxWidth()
@@ -44,7 +46,30 @@ fun PokemonInfo(
                 MaterialTheme.colorScheme.background,
                 rememberTopConcaveCurve(topCurvature = MaterialTheme.spacing.dimen48)
             )
-            .padding(top = MaterialTheme.spacing.dimen48),
+            .padding(top = MaterialTheme.spacing.dimen48)
+    ) {
+        PokemonAboutAndTypes(
+            modifier = Modifier.fillMaxWidth(), pokemon = pokemon
+        )
+        PokemonMoves(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = MaterialTheme.spacing.dimen16),
+            pokemon = pokemon
+        )
+
+    }
+}
+
+@Composable
+fun PokemonAboutAndTypes(
+    modifier: Modifier = Modifier,
+    pokemon: Pokemon
+) {
+    Row(
+        modifier = modifier
+            .height(IntrinsicSize.Min)
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceAround
     ) {
         AboutColumn(
@@ -56,12 +81,65 @@ fun PokemonInfo(
                 .width(MaterialTheme.spacing.dimen1)
                 .background(MaterialTheme.colorScheme.surfaceVariant),
         )
-        TypeColumn(
+        PokemonTypesColumn(
             modifier = Modifier.weight(1f), pokemon = pokemon
         )
+
     }
 }
 
+@Composable
+fun PokemonTypesColumn(
+    modifier: Modifier = Modifier,
+    pokemon: Pokemon
+) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = "Types",
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleMedium
+        )
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.dimen8))
+        pokemon.pokemonType.forEach {
+            PokemonType(type = it)
+        }
+    }
+
+}
+
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun PokemonMoves(
+    modifier: Modifier = Modifier,
+    pokemon: Pokemon
+) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+    ) {
+        Text(
+            modifier = Modifier.padding(MaterialTheme.spacing.dimen12),
+            text = "Moves",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold
+        )
+        FlowRow(horizontalArrangement = Arrangement.SpaceEvenly) {
+            pokemon.moves.forEach { move ->
+                Text(
+                    text = move,
+                    modifier = Modifier
+                        .padding(MaterialTheme.spacing.dimen4)
+                        .border(
+                            MaterialTheme.spacing.dimen1,
+                            MaterialTheme.colorScheme.onBackground,
+                            MaterialTheme.shapes.small
+                        )
+                        .padding(MaterialTheme.spacing.dimen4)
+                )
+            }
+        }
+    }
+}
 
 @Composable
 fun AboutColumn(
@@ -87,16 +165,7 @@ fun AboutColumn(
             value = "${pokemon.weightInGrams} g"
         )
 
-        Text(
-            modifier = Modifier.padding(top = MaterialTheme.spacing.dimen28),
-            text = "Types",
-            fontWeight = FontWeight.Bold,
-            style = MaterialTheme.typography.titleMedium
-        )
-        Spacer(modifier = Modifier.height(MaterialTheme.spacing.dimen8))
-        pokemon.pokemonType.forEach {
-            PokemonType(type = it)
-        }
+
     }
 
 }
@@ -113,30 +182,6 @@ private fun IconValueRow(
     ) {
         Icon(painter = icon, contentDescription = null)
         Text(modifier = Modifier.padding(MaterialTheme.spacing.dimen8), text = value)
-    }
-}
-
-@Composable
-fun TypeColumn(
-    modifier: Modifier = Modifier,
-    pokemon: Pokemon
-) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Moves",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
-        )
-        Column(
-            modifier = Modifier.verticalScroll(rememberScrollState())
-        ) {
-            pokemon.moves.forEach { move ->
-                Text(text = move)
-            }
-        }
     }
 }
 

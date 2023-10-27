@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -56,52 +58,75 @@ fun PokemonDetailScreen(
             }
         }
     }
-    Box(
+    Column(
         modifier = modifier
             .fillMaxSize()
-            .pullRefresh(state)
+            .background(MaterialTheme.colorScheme.outlineVariant)
     ) {
-        when (val pokemon = viewModel.pokemon) {
-            is LoadingData.Error -> DefaultError(errorMsg = pokemon.errorMsg)
-            is LoadingData.LoadedData -> PokemonDetail(
-                pokemon = pokemon.data
+        TopBar(pokemon = viewModel.pokemon)
+        Box(
+            modifier = modifier
+                .weight(1f)
+                .pullRefresh(state)
+                .verticalScroll(rememberScrollState())
+        ) {
+            when (val pokemon = viewModel.pokemon) {
+                is LoadingData.Error -> DefaultError(errorMsg = pokemon.errorMsg)
+                is LoadingData.LoadedData -> PokemonDetail(
+                    pokemon = pokemon.data
+                )
+
+                LoadingData.Loading -> DefaultLoadingIndicator()
+            }
+
+            PullRefreshIndicator(
+                refreshing = isRefreshing,
+                state = state,
+                modifier = Modifier.align(Alignment.TopCenter)
             )
-
-            LoadingData.Loading -> DefaultLoadingIndicator()
         }
-
-        PullRefreshIndicator(
-            refreshing = isRefreshing,
-            state = state,
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+private fun TopBar(
+    pokemon: LoadingData<Pokemon>
+) {
+    val backPressedDispatcherOwner = LocalOnBackPressedDispatcherOwner.current
+    TopAppBar(
+        title = {
+            Text(
+                text = run {
+                    if (pokemon is LoadingData.LoadedData) {
+                        pokemon.data.name
+                    } else {
+                        ""
+                    }
+                }, style = MaterialTheme.typography.titleLarge
+            )
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = { backPressedDispatcherOwner?.onBackPressedDispatcher?.onBackPressed() }) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back Icon"
+                )
+            }
+        }
+    )
+
+}
+
+@Composable
 fun PokemonDetail(
     modifier: Modifier = Modifier, pokemon: Pokemon
 ) {
-    val backPressedDispatcherOwner = LocalOnBackPressedDispatcherOwner.current
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surfaceVariant)
     ) {
-        TopAppBar(
-            title = {
-                Text(text = pokemon.name, style = MaterialTheme.typography.titleLarge)
-            },
-            navigationIcon = {
-                IconButton(
-                    modifier = Modifier.align(Alignment.Start),
-                    onClick = { backPressedDispatcherOwner?.onBackPressedDispatcher?.onBackPressed() }) {
-                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back Icon")
-                }
-            }
-        )
-
         PokemonImage(pokemon = pokemon)
         PokemonInfo(
             pokemon = pokemon
