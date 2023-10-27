@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pokedetails.data.pokemon.models.domain.PokemonShortDetail
 import com.example.pokedetails.data.pokemon.repository.PokemonRepository
+import com.example.pokedetails.utils.extensions.capitalizeFirst
+import com.example.pokedetails.utils.extensions.maps
 import com.example.pokedetails.utils.loadingdata.LoadingData
 import com.example.pokedetails.utils.loadingdata.toLoadingData
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +30,9 @@ class PokemonListScreenViewModel @Inject constructor(
     private fun getPokemons() {
         viewModelScope.launch {
             pokemons = LoadingData.Loading
-            pokemons = pokemonRepository.getPokemons().toLoadingData()
+            pokemons = pokemonRepository.getPokemons().maps {
+                it.copy(pokemonName = it.pokemonName.capitalizeFirst())
+            }.toLoadingData()
         }
 
     }
