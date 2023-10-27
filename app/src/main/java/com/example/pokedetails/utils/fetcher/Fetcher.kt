@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.pokedetails.utils.extensions.errorMsg
 import com.example.pokedetails.utils.loadingdata.LoadingData
 import com.example.pokedetails.utils.loadingdata.toLoadedData
 import com.example.pokedetails.utils.loadingdata.toLoadingData
@@ -47,7 +48,7 @@ class Fetcher<T>(
                 RefreshState.Idle
             },
             onFailure = {
-                RefreshState.Error(it.message)
+                RefreshState.Error(it.errorMsg)
             }
         )
     }

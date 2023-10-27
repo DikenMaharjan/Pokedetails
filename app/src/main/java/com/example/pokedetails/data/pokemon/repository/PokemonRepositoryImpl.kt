@@ -1,26 +1,33 @@
 package com.example.pokedetails.data.pokemon.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.example.pokedetails.data.pagination.pokemon.pagingsource.PokemonPagingSource
 import com.example.pokedetails.data.pokemon.models.domain.Pokemon
 import com.example.pokedetails.data.pokemon.models.domain.PokemonShortDetail
 import com.example.pokedetails.data.pokemon.models.mapper.toPokemon
-import com.example.pokedetails.data.pokemon.models.mapper.toPokemonModel
 import com.example.pokedetails.network.api.PokemonApi
 import com.example.pokedetails.network.utils.SafeApiCall
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class PokemonRepositoryImpl @Inject constructor(
     private val safeApiCall: SafeApiCall,
     private val pokemonApi: PokemonApi
 ) : PokemonRepository {
-
-    override suspend fun getPokemons(): Result<List<PokemonShortDetail>> {
-        return safeApiCall.execute {
-            pokemonApi.getPokemons()
-        }.map { paginatedResponse ->
-            paginatedResponse.results.map {
-                it.toPokemonModel()
+    override fun getPokemonsPagingData(): Flow<PagingData<PokemonShortDetail>> {
+        return Pager(
+            config = PagingConfig(20),
+            initialKey = null,
+            pagingSourceFactory = {
+                PokemonPagingSource(
+                    pokemonApi = pokemonApi,
+                    safeApiCall = safeApiCall
+                )
             }
-        }
+        ).flow
     }
 
     override suspend fun getPokemonDetail(detailUrl: String): Result<Pokemon> {
@@ -28,13 +35,6 @@ class PokemonRepositoryImpl @Inject constructor(
             pokemonApi.getPokemonDetail(detailUrl)
         }.map {
             it.toPokemon()
-//            Pokemon(
-//                name = "He",
-//                imageUrl = listOf(),
-//                pokemonType = listOf(),
-//                weight = "",
-//                height = "x"
-//            )
         }
     }
 }

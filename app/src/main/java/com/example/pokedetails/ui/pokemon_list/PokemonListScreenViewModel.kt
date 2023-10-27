@@ -1,40 +1,26 @@
 package com.example.pokedetails.ui.pokemon_list
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pokedetails.data.pokemon.models.domain.PokemonShortDetail
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.example.pokedetails.data.pokemon.repository.PokemonRepository
 import com.example.pokedetails.utils.extensions.capitalizeFirst
-import com.example.pokedetails.utils.extensions.maps
-import com.example.pokedetails.utils.loadingdata.LoadingData
-import com.example.pokedetails.utils.loadingdata.toLoadingData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
 class PokemonListScreenViewModel @Inject constructor(
-    private val pokemonRepository: PokemonRepository
+    pokemonRepository: PokemonRepository
 ) : ViewModel() {
 
-    var pokemons: LoadingData<List<PokemonShortDetail>> by mutableStateOf(LoadingData.Loading)
-        private set
 
-    init {
-        getPokemons()
-    }
+    val pokemonsPagingData = pokemonRepository
+        .getPokemonsPagingData()
+        .map { pokemonPagingData ->
+            pokemonPagingData.map { it.copy(pokemonName = it.pokemonName.capitalizeFirst()) }
+        }.cachedIn(viewModelScope)
 
-    private fun getPokemons() {
-        viewModelScope.launch {
-            pokemons = LoadingData.Loading
-            pokemons = pokemonRepository.getPokemons().maps {
-                it.copy(pokemonName = it.pokemonName.capitalizeFirst())
-            }.toLoadingData()
-        }
-
-    }
 
 }
