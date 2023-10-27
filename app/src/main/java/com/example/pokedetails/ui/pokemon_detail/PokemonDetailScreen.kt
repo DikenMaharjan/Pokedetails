@@ -1,14 +1,22 @@
 package com.example.pokedetails.ui.pokemon_detail
 
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.IconButton
+import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
@@ -17,6 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.pokedetails.data.pokemon.models.domain.Pokemon
+import com.example.pokedetails.ui.pokemon_detail.composables.PokemonImage
+import com.example.pokedetails.ui.pokemon_detail.composables.PokemonInfo
 import com.example.pokedetails.ui.shared.DefaultError
 import com.example.pokedetails.ui.shared.DefaultLoadingIndicator
 import com.example.pokedetails.utils.extensions.showShortToast
@@ -50,11 +60,13 @@ fun PokemonDetailScreen(
         modifier = modifier
             .fillMaxSize()
             .pullRefresh(state)
-            .verticalScroll(rememberScrollState())
     ) {
         when (val pokemon = viewModel.pokemon) {
             is LoadingData.Error -> DefaultError(errorMsg = pokemon.errorMsg)
-            is LoadingData.LoadedData -> PokemonDetail(pokemon.data)
+            is LoadingData.LoadedData -> PokemonDetail(
+                pokemon = pokemon.data
+            )
+
             LoadingData.Loading -> DefaultLoadingIndicator()
         }
 
@@ -66,7 +78,33 @@ fun PokemonDetailScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PokemonDetail(data: Pokemon) {
-    Text(text = data.name)
+fun PokemonDetail(
+    modifier: Modifier = Modifier, pokemon: Pokemon
+) {
+    val backPressedDispatcherOwner = LocalOnBackPressedDispatcherOwner.current
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        TopAppBar(
+            title = {
+                Text(text = pokemon.name, style = MaterialTheme.typography.titleLarge)
+            },
+            navigationIcon = {
+                IconButton(
+                    modifier = Modifier.align(Alignment.Start),
+                    onClick = { backPressedDispatcherOwner?.onBackPressedDispatcher?.onBackPressed() }) {
+                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back Icon")
+                }
+            }
+        )
+
+        PokemonImage(pokemon = pokemon)
+        PokemonInfo(
+            pokemon = pokemon
+        )
+    }
 }

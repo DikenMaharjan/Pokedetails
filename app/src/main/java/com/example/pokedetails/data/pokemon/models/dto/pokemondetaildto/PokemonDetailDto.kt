@@ -16,5 +16,6 @@ data class PokemonDetailDto(
     val species: NameAndUrl,
     val stats: List<Stat>,
     val types: List<Type>,
-    val weight: Int
+    val weight: Int,
+    val sprites: Sprite
 )
